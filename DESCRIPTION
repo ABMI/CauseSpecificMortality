@@ -12,6 +12,7 @@ Imports:
     Cyclops,
     FeatureExtraction,
     PatientLevelPrediction,
+    Andromeda,
     ggplot2,
     ff,
     ffbase,
