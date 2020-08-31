@@ -177,7 +177,7 @@ execute <- function(connectionDetails,
   
   if(causePrediction){
     
-    causePrediction (outputFolder, TAR, algorithm = "rf", seedNum = NULL)
+    causePrediction (outputFolder, TAR = 60, algorithm = "xgbTree", seedNum = NULL)
   
   }
   
