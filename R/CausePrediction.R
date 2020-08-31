@@ -296,7 +296,7 @@ causePrediction <- function (outputFolder, TAR = 30, algorithm = "rf", seedNum =
   
   # Precision Recall curve (PR curve)
   
-  classes <- dfPerformacne$CauseLabel
+  classes <- dfPerformance$CauseLabel
   
   name <- paste0(algorithm,"_",TAR)
   savepath <- paste("PR curve", name, sep = "_")
@@ -315,8 +315,8 @@ causePrediction <- function (outputFolder, TAR = 30, algorithm = "rf", seedNum =
   
   for (i in seq_along(levels(classes))) {
     cur.classes <- levels(classes)[i]
-    test.labels <- dataTestResult$cause.prediction == cur.classes
-    pred <- prediction(dataTestValue[,i], test.labels)
+    test.labels <- dfPerformance$cause.prediction == cur.classes
+    pred <- prediction(dfPerformance$cause.value[,i], test.labels)
     perf <- performance(pred, "prec", "rec")
     roc.x <- unlist(perf@x.values)
     roc.y <- unlist(perf@y.values)
@@ -326,8 +326,8 @@ causePrediction <- function (outputFolder, TAR = 30, algorithm = "rf", seedNum =
     # abline(a= ab$baseline[i], b=0, col = colors[i], lwd = 2)
     lines(roc.y ~ roc.x, col = colors[i], lwd = 1.5)
     
-    dataTestTrueCase <- as.data.frame(dataTestValue)
-    dataTestTrueCase$trueClass <- ifelse(dataTestResult$cause.prediction == cur.classes, 1 ,0)
+    dataTestTrueCase <- as.data.frame(dfPerformance$cause.value)
+    dataTestTrueCase$trueClass <- ifelse(dfPerformance$cause.prediction == cur.classes, 1 ,0)
     dataTestPositive <- dataTestTrueCase %>% filter(trueClass == 1)
     dataTestNegative <- dataTestTrueCase %>% filter(trueClass == 0)
     pr <- PRROC::pr.curve(scores.class0 = dataTestPositive[,i], scores.class1 = dataTestNegative[,i], curve = T)
