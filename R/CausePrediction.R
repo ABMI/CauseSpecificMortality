@@ -169,7 +169,7 @@ causePrediction <- function (outputFolder, TAR = 30, algorithm = "rf", seedNum =
   # saveModel <- paste(saveModel, "rds", sep = ".")
   # saveRDS(cause.model.rf, saveModel)
   
-  # Random Forest using caret package
+  # Model develop using caret package
   fitControl <- caret::trainControl(method = "repeatedcv", number = 3, repeats = 1, verboseIter = T)
   
   #grid search
@@ -361,13 +361,13 @@ causePrediction <- function (outputFolder, TAR = 30, algorithm = "rf", seedNum =
   colorset <- c("#a6cee3","#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a")
   par(pty = "s")
   
-  try(pROC::plot.roc(dfPerformance[,2], dfPerformance$cause.value[,1], legacy.axes = T, percent = F, col = colorset[1], identity = F))
+  try(pROC::plot.roc(dfPerformance[,3], dfPerformance$cause.value[,1], legacy.axes = T, percent = F, col = colorset[1], identity = F))
   
   for (i in 2:labelNum+1){
-    try(pROC::lines.roc(dfPerformance[,i+1], dfPerformance$cause.value[,i], col = colorset[i], identity = F))
+    try(pROC::lines.roc(dfPerformance[,i+2], dfPerformance$cause.value[,i], col = colorset[i], identity = F))
   }
   
-  try(pROC::lines.roc(dfPerformance$OtherLabel, dfPerformance$cause.value[,labelNum + 2], col = colorset[labelNum+1], identity = F))
+  try(pROC::lines.roc(dfPerformance$OtherLabel, dfPerformance$cause.value[,labelNum + 2], col = colorset[labelNum+2], identity = F))
   
   legend("bottomright", bty = "n",
          legend=c("Survival", "Malignant neoplastic disease", "Ischemic heart disease", "Cerebrovascular disease",
