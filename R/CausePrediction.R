@@ -171,7 +171,7 @@ causePrediction <- function (outputFolder, TAR = 30, algorithm = "rf", seedNum =
   # saveModel <- paste(saveModel, "rds", sep = ".")
   # saveRDS(cause.model.rf, saveModel)
   
-  # Random Forest using caret package
+  # Model develop using caret package
   fitControl <- caret::trainControl(method = "repeatedcv", number = 3, repeats = 1, verboseIter = T)
   
   #grid search
@@ -300,7 +300,7 @@ causePrediction <- function (outputFolder, TAR = 30, algorithm = "rf", seedNum =
   
   # Precision Recall curve (PR curve)
   
-  classes <- dfPerformacne$CauseLabel
+  classes <- dfPerformance$CauseLabel
   
   name <- paste0(algorithm,"_",TAR)
   savepath <- paste("PR curve", name, sep = "_")
@@ -319,8 +319,8 @@ causePrediction <- function (outputFolder, TAR = 30, algorithm = "rf", seedNum =
   
   for (i in seq_along(levels(classes))) {
     cur.classes <- levels(classes)[i]
-    test.labels <- dataTestResult$cause.prediction == cur.classes
-    pred <- prediction(dataTestValue[,i], test.labels)
+    test.labels <- dfPerformance$cause.prediction == cur.classes
+    pred <- prediction(dfPerformance$cause.value[,i], test.labels)
     perf <- performance(pred, "prec", "rec")
     roc.x <- unlist(perf@x.values)
     roc.y <- unlist(perf@y.values)
@@ -330,8 +330,8 @@ causePrediction <- function (outputFolder, TAR = 30, algorithm = "rf", seedNum =
     # abline(a= ab$baseline[i], b=0, col = colors[i], lwd = 2)
     lines(roc.y ~ roc.x, col = colors[i], lwd = 1.5)
     
-    dataTestTrueCase <- as.data.frame(dataTestValue)
-    dataTestTrueCase$trueClass <- ifelse(dataTestResult$cause.prediction == cur.classes, 1 ,0)
+    dataTestTrueCase <- as.data.frame(dfPerformance$cause.value)
+    dataTestTrueCase$trueClass <- ifelse(dfPerformance$cause.prediction == cur.classes, 1 ,0)
     dataTestPositive <- dataTestTrueCase %>% filter(trueClass == 1)
     dataTestNegative <- dataTestTrueCase %>% filter(trueClass == 0)
     pr <- PRROC::pr.curve(scores.class0 = dataTestPositive[,i], scores.class1 = dataTestNegative[,i], curve = T)
@@ -364,13 +364,13 @@ causePrediction <- function (outputFolder, TAR = 30, algorithm = "rf", seedNum =
   par(pty = "s")
 
   
-  try(pROC::plot.roc(dfPerformance[,2], dfPerformance$cause.value[,1], legacy.axes = T, percent = F, col = colorset[1], identity = F))
+  try(pROC::plot.roc(dfPerformance[,3], dfPerformance$cause.value[,1], legacy.axes = T, percent = F, col = colorset[1], identity = F))
   
   for (i in 2:labelNum+1){
-    try(pROC::lines.roc(dfPerformance[,i+1], dfPerformance$cause.value[,i], col = colorset[i], identity = F))
+    try(pROC::lines.roc(dfPerformance[,i+2], dfPerformance$cause.value[,i], col = colorset[i], identity = F))
   }
   
-  try(pROC::lines.roc(dfPerformance$OtherLabel, dfPerformance$cause.value[,labelNum + 2], col = colorset[labelNum+1], identity = F))
+  try(pROC::lines.roc(dfPerformance$OtherLabel, dfPerformance$cause.value[,labelNum + 2], col = colorset[labelNum+2], identity = F))
   
   legend("bottomright", bty = "n",
          legend=c("Survival", "Malignant neoplastic disease", "Ischemic heart disease", "Cerebrovascular disease",
